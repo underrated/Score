@@ -5,12 +5,17 @@
 
 using namespace std;
 
-int x;
+int global;
 
 class example {
 
+  // Field variable with inital value
   int x = 1;
+
+  // Field pointer variable with initial value
   int *y = NULL;
+
+  // Template class instance
   vector<string> names;
 
   public:
@@ -24,6 +29,8 @@ class example {
   int get_x() {
     return x;
   }
+
+  float prototype(int arg);
 
 };
 

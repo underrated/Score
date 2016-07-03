@@ -2,6 +2,7 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Stack;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BufferedTokenStream;
@@ -22,21 +23,24 @@ class SCQuery {
 		String cppHeader = "";
 		String cppSource = "";
 		
+		Stack<String> currentClass;
+		
 		void prependHeader(String what) {
-			cppHeader = what + cppHeader;
+			cppHeader = what + cppHeader + "\n";
 		}
 		void appendHeader(String what) {
-			cppHeader = cppHeader + what;
+			cppHeader = cppHeader + what + "\n";
 		}
 		void prependSource(String what) {
-			cppSource = what + cppSource;
+			cppSource = what + cppSource + "\n";
 		}
 		void appendSource(String what) {
-			cppSource = cppSource + what;
+			cppSource = cppSource + what + "\n";
 		}
 		
 		SCQueryListener(BufferedTokenStream tokens) {
-			this.tokens = tokens;			
+			this.tokens = tokens;
+			currentClass = new Stack<>();
 		}
 		
 		@Override
@@ -55,33 +59,6 @@ class SCQuery {
 			
 			// TODO : filter out class and explicit function declarations
 			// TODO : keep templates, function prototypes, global variables, and pretty much everything else
-//			if( null != ctx.blockdeclaration() ) {
-//				CPP14Parser.BlockdeclarationContext bdc = ctx.blockdeclaration();
-//				if( null != bdc.simpledeclaration() ) {
-//					CPP14Parser.SimpledeclarationContext sd = bdc.simpledeclaration();
-//					if( null != sd.declspecifierseq() ) {
-//						CPP14Parser.DeclspecifierseqContext dss = sd.declspecifierseq();
-//						if( null != dss.declspecifier() ) {
-//							CPP14Parser.DeclspecifierContext ds = dss.declspecifier();
-//							if( null != ds.typespecifier() ) {
-//								CPP14Parser.TypespecifierContext ts = ds.typespecifier();
-//								if( null != ts.classspecifier() ) {
-//									// Found class declaration with a body, skip it, deal with it later
-//									return;
-//								}
-//								
-//							}
-//						}
-//					}
-//				}
-//			} else 
-			
-//			if( null != ctx.functiondefinition() ) {
-//				CPP14Parser.FunctiondefinitionContext fd = ctx.functiondefinition();
-//				// Skip function definitions with implementations
-//				if( null != fd.functionbody() )
-//					return;				
-//			}
 			
 			try {
 				if( null != ctx.functiondefinition() )
@@ -104,7 +81,7 @@ class SCQuery {
 			int a = ctx.start.getStartIndex();
 			int b = ctx.stop.getStopIndex();
 			Interval interval = new Interval(a, b);
-			System.out.println(ctx.start.getInputStream().getText(interval));
+			appendHeader(ctx.start.getInputStream().getText(interval));
 
 		}
 		
@@ -122,17 +99,36 @@ class SCQuery {
 				Interval interval = new Interval(a, b);
 				baseClause= ctx.start.getInputStream().getText(interval)+" ";
 			}
-			System.out.println("GENERATED: " + classKey + className + classVirtSpecifier + baseClause + "{" );
+			appendHeader(classKey + className + classVirtSpecifier + baseClause + "{" );
 		}
 		
 		@Override
 		public void exitClassspecifier(CPP14Parser.ClassspecifierContext ctx) {
-			System.out.println("GENERATED: " + "};");
+			appendHeader("};");
 		}
 		
 		@Override
 		public void enterFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx) {
-			System.out.println("GENERATED: " + ctx.getText());
+			String prototypeString = "";
+			int a,b;
+			// Return type, access specifiers and other stuff
+			if( null != ctx.declspecifierseq() ) {
+				a = ctx.declspecifierseq().start.getStartIndex();
+				b = ctx.declspecifierseq().stop.getStopIndex();
+				prototypeString += ctx.start.getInputStream().getText(new Interval(a, b))+" ";
+			}
+			
+			// Function name and arguments
+			a=ctx.declarator().start.getStartIndex();
+			b=ctx.declarator().stop.getStopIndex();
+			prototypeString += ctx.start.getInputStream().getText(new Interval(a, b));
+			
+			prototypeString += ";";
+			
+			// Write to header
+			appendHeader(prototypeString);
+			
+			// TODO : Write to source
 		}
 		
 		@Override
@@ -141,8 +137,22 @@ class SCQuery {
 			int b = ctx.stop.getStopIndex();
 			Interval interval = new Interval(a, b);
 			String declaration = ctx.start.getInputStream().getText(interval)+" ";
-			System.out.println("GENERATED: " + declaration);
+			
+			boolean isField = false;
+			try {
+				isField = null != ctx.memberdeclaratorlist(); 
+			} catch (Throwable e) {}
+
+			boolean isPrototype = false;
+			try {
+				isPrototype = null == ctx.functiondefinition().functionbody(); 
+			} catch (Throwable e) {}
+			
+			if(isField || isPrototype)
+				appendHeader(declaration);
 		}
+		
+		// TODO treat static fields
 		
 	}
 
