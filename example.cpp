@@ -7,7 +7,30 @@ using namespace std;
 
 int global;
 
+// template class
+template <typename T = int>
+class example_tpl {
+  T tpl_field;
+
+  T get_field() {
+    return tpl_field;
+  }
+
+  void set_field(T field) {
+    this.tpl_field = field;
+  }
+};
+
+// function template
+template<typename T>
+T funct(int x) {
+  return x + 1;
+}
+
 class example {
+
+  // Field variable
+  string field;
 
   // Field variable with inital value
   int x = 1;
@@ -17,6 +40,9 @@ class example {
 
   // Template class instance
   vector<string> names;
+
+  // Function pointer
+  void *(*foo)(int *);
 
   public:
   example() {}
