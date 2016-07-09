@@ -12,9 +12,9 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-class SCQuery {
+class Score {
 
-	public static class SCQueryListener extends CPP14BaseListener {
+	public static class ScoreListener extends CPP14BaseListener {
 
 		BufferedTokenStream tokens;
 
@@ -39,7 +39,7 @@ class SCQuery {
 			cppSource = cppSource + what + "\n";
 		}
 
-		SCQueryListener(BufferedTokenStream tokens) {
+		ScoreListener(BufferedTokenStream tokens) {
 			this.tokens = tokens;
 			currentContext = new Stack<>();
 		}
@@ -102,7 +102,7 @@ class SCQuery {
 				for (Token dir : dirChannel) {
 					if (dir != null) {
 						String txt = dir.getText();
-						System.out.println(txt);
+						appendHeader(txt);
 					}
 				}
 			}
@@ -190,22 +190,24 @@ class SCQuery {
 			appendHeader(specSeq + " " + funcNameArgs + ";");
 
 			// TODO : Write to source
-			if( !currentContext.isEmpty() ) {
-				String defString = "";
-				String funcBody="";
-				if( null != ctx.functionbody() ) {
+			if( null != ctx.functionbody() ) {
+					String defString = "";
+					String funcBody="";
 					a = ctx.functionbody().start.getStartIndex();
 					b = ctx.functionbody().stop.getStopIndex();
 					funcBody = ctx.start.getInputStream().getText(new Interval(a, b));
-				}
-				ParserRuleContext csx = (CPP14Parser.ClassspecifierContext)currentContext.peek();
-				CPP14Parser.ClassspecifierContext cs = (csx instanceof CPP14Parser.ClassspecifierContext) ? (CPP14Parser.ClassspecifierContext)csx : null;
-				if( null != cs ) {
-					String className = cs.classhead().classheadname().getText();
-					defString = specSeq + " " + className + "::" + funcNameArgs + funcBody;
-				}
-				// Write implementation to source file
-				appendSource(defString);				
+					if( !currentContext.isEmpty() ) {
+						ParserRuleContext csx = (CPP14Parser.ClassspecifierContext)currentContext.peek();
+						CPP14Parser.ClassspecifierContext cs = (csx instanceof CPP14Parser.ClassspecifierContext) ? (CPP14Parser.ClassspecifierContext)csx : null;
+						if( null != cs ) {
+							String className = cs.classhead().classheadname().getText();
+							defString = specSeq + " " + className + "::" + funcNameArgs + " " + funcBody;
+						}
+					}
+					else 
+						defString = specSeq + " " + funcNameArgs + " " + funcBody;
+					// Write implementation to source file
+					appendSource(defString);				
 			}
 		}
 
@@ -240,6 +242,7 @@ class SCQuery {
 		}
 
 		// TODO : treat static fields
+		// TODO : 
 
 	}
 
@@ -247,7 +250,7 @@ class SCQuery {
 		CPP14Lexer lexer = new CPP14Lexer(new ANTLRInputStream(new FileInputStream("example.cpp")));
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CPP14Parser parser = new CPP14Parser(tokens);
-		SCQueryListener listener = new SCQueryListener(tokens);
+		ScoreListener listener = new ScoreListener(tokens);
 		CPP14Parser.TranslationunitContext context = parser.translationunit();
 
 		ParseTreeWalker walker = new ParseTreeWalker();

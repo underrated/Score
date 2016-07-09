@@ -1,4 +1,5 @@
 *.class
 *.swp
 tree.ps
+.project
 

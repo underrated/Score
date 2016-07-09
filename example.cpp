@@ -3,6 +3,9 @@
 #include <vector>
 #include <string>
 
+#ifndef __example__cpp
+#define __example__cpp
+
 using namespace std;
 
 int global;
@@ -20,6 +23,8 @@ class example_tpl {
     this.tpl_field = field;
   }
 };
+
+#define THIS
 
 // function template
 template<typename T>
@@ -68,9 +73,13 @@ int f(int);
 class example2: public example, example1 {
 };
 
+int standalone_prototype(int z);
+
 int main_dummy() {
   example* ex_inst = new example();
   ex_inst.set_x(5);
   caout << ex_inst.get_x() << endl;
   return 0;
 }
+
+#endif
