@@ -1,3 +1,4 @@
+package org.textforest.score;
 // Generated from CPP14.g4 by ANTLR 4.5.3
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

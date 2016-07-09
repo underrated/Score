@@ -1,3 +1,4 @@
+package org.textforest.score;
 
 import java.io.FileInputStream;
 import java.io.IOException;
