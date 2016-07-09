@@ -21,7 +21,7 @@ class SCQuery {
 		String cppHeader = "";
 		String cppSource = "";
 
-		Stack<String> currentClass;
+		Stack<ParserRuleContext> currentContext;
 
 		void prependHeader(String what) {
 			cppHeader = what + cppHeader + "\n";
@@ -41,7 +41,7 @@ class SCQuery {
 
 		SCQueryListener(BufferedTokenStream tokens) {
 			this.tokens = tokens;
-			currentClass = new Stack<>();
+			currentContext = new Stack<>();
 		}
 
 		boolean isTemplate(ParserRuleContext ctx) {
@@ -137,6 +137,8 @@ class SCQuery {
 
 			if (isTemplate(ctx))
 				return;
+			
+			currentContext.push(ctx);
 
 			String classKey = ctx.classhead().classkey().getText() + " ";
 			String className = ctx.classhead().classheadname().getText() + " ";
@@ -157,6 +159,7 @@ class SCQuery {
 		public void exitClassspecifier(CPP14Parser.ClassspecifierContext ctx) {
 			if(isTemplate(ctx)) return;
 			appendHeader("};");
+			currentContext.pop();
 		}
 
 		@Override
@@ -168,26 +171,42 @@ class SCQuery {
 			if(isTemplate(ctx.getParent()))
 				return;
 
-			String prototypeString = "";
 			int a, b;
 			// Return type, access specifiers and other stuff
+			String specSeq = "";
 			if (null != ctx.declspecifierseq()) {
 				a = ctx.declspecifierseq().start.getStartIndex();
 				b = ctx.declspecifierseq().stop.getStopIndex();
-				prototypeString += ctx.start.getInputStream().getText(new Interval(a, b)) + " ";
+				specSeq = ctx.start.getInputStream().getText(new Interval(a, b));
 			}
 
 			// Function name and arguments
+			String funcNameArgs = "";
 			a = ctx.declarator().start.getStartIndex();
 			b = ctx.declarator().stop.getStopIndex();
-			prototypeString += ctx.start.getInputStream().getText(new Interval(a, b));
+			funcNameArgs = ctx.start.getInputStream().getText(new Interval(a, b));
 
-			prototypeString += ";";
-
-			// Write to header
-			appendHeader(prototypeString);
+			// Write prototype to header
+			appendHeader(specSeq + " " + funcNameArgs + ";");
 
 			// TODO : Write to source
+			if( !currentContext.isEmpty() ) {
+				String defString = "";
+				String funcBody="";
+				if( null != ctx.functionbody() ) {
+					a = ctx.functionbody().start.getStartIndex();
+					b = ctx.functionbody().stop.getStopIndex();
+					funcBody = ctx.start.getInputStream().getText(new Interval(a, b));
+				}
+				ParserRuleContext csx = (CPP14Parser.ClassspecifierContext)currentContext.peek();
+				CPP14Parser.ClassspecifierContext cs = (csx instanceof CPP14Parser.ClassspecifierContext) ? (CPP14Parser.ClassspecifierContext)csx : null;
+				if( null != cs ) {
+					String className = cs.classhead().classheadname().getText();
+					defString = specSeq + " " + className + "::" + funcNameArgs + funcBody;
+				}
+				// Write implementation to source file
+				appendSource(defString);				
+			}
 		}
 
 		@Override
