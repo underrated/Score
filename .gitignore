@@ -2,4 +2,5 @@
 *.swp
 tree.ps
 .project
+*.jar
 
