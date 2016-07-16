@@ -366,11 +366,11 @@ class Score {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CPP14Parser parser = new CPP14Parser(tokens);
 		ScoreListener listener = new ScoreListener(tokens, header, src);
+
 		CPP14Parser.TranslationunitContext context = parser.translationunit();
 
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(listener, context);
-		
 	}
 
 }
