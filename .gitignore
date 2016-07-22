@@ -3,4 +3,6 @@
 tree.ps
 .project
 *.jar
+/build/
+/.gradle/
 
