@@ -1,6 +1,6 @@
 * fix the #endif issue
+* add antlr gradle plugin
 * re-edit README.md start with a short presentation of the tool and instalation instructions
 * generate initialization of static fields
 * write tests
 * use assertions to check the validity of options instead of using complex conditional statements
-* add build scripts
