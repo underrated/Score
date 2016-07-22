@@ -5,4 +5,7 @@ tree.ps
 *.jar
 /build/
 /.gradle/
+/bin/
+/.settings/
+/.gradle/
 
