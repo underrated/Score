@@ -3,4 +3,12 @@
 * re-edit README.md start with a short presentation of the tool and instalation instructions
 * generate initialization of static fields
 * write tests
+  * class methods
+  * static fields
+  * class in class
+  * preprocessor directives at the end of file
+  * preprocessor directives in other weird places 
+  * functions in functions
+  * lamba expressions
+  * initializations
 * use assertions to check the validity of options instead of using complex conditional statements

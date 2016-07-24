@@ -277,6 +277,22 @@ class Score {
 			if (isField || isPrototype)
 				appendHeader(declaration);
 		}
+		
+		@Override
+		public void exitTranslationunit(CPP14Parser.TranslationunitContext ctx) {
+			Token end = ctx.getStop();
+			int i = end.getTokenIndex();
+			List<Token> dirChannel = tokens.getHiddenTokensToLeft(i, 1);
+			if (dirChannel != null) {
+				for (Token dir : dirChannel) {
+					if (dir != null) {
+						String txt = dir.getText();
+						appendHeader(txt);
+					}
+				}
+			}	
+		}
+		
 
 		// TODO : treat static fields
 		// TODO :
