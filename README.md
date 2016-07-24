@@ -93,23 +93,38 @@ int global_function() {
 
 ```
 
-Building and installation
+Build and install
 =========================
-The easiest way to build the project is by using gradle:
+The easiest way to build Score is by using gradle:
 
 ```bash
 git clone https://github.com/underrated/Score.git
 cd Score
 gradle build
 ```
+You can also import the cloned repo as a Java project into Eclipse and do the build from there.
 
-After the build is done you will find a Score.zip or a Score.tar archive in the following folder:
+After the gradle build is done you will find a Score.zip or a Score.tar archive in the following folder:
 
-./build/distributions
+*./build/distributions*
 
-Extract the archive wherever you like and add the Score/bin folder into the PATH variable.
+Extract the archive wherever you like and add the Score/bin folder to the PATH variable.
 
-Then you can run "Score -h" to learn what arguments it takes.
+Then you can run *"Score -h"* to learn what arguments it takes.
+
+Usage
+=====
+```
+usage: score -i input.hpp -o output
+ -h          Print help message.
+ -i <arg>    Path to input file.
+ -o <arg>    Path to generated files in the form <folder>/<name_root>. Two
+             files will be created, one with the hpp extension added to
+             the name root and one with the cpp extensions.
+ -oh <arg>   Path to the generated header file.
+ -os <arg>   Path to the generated source file.
+
+```
 
 Motivation
 ==========
