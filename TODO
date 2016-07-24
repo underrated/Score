@@ -1,5 +1,4 @@
 * automatically include generated header in source
-* re-edit README.md start with a short presentation of the tool and instalation instructions
 * generate initialization of static fields
 * write tests
   * class methods
@@ -11,4 +10,5 @@
   * lamba expressions
   * initializations
 * use assertions to check the validity of options instead of using complex conditional statements
+* add license
 * add antlr gradle plugin
