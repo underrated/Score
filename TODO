@@ -1,7 +1,8 @@
 * needed for alpha release
-  * automatically include generated header in source
   * generate initialization of static fields
   * add a sanity test that passes
+
+* The parser does not recognize syntax errors in certain places and copies them automatically
 
 * write tests
   * class methods
@@ -12,6 +13,8 @@
   * functions in functions
   * lamba expressions
   * initializations
+  * automatically include header
+  * test various combinations of command line arguments
 * use assertions to check the validity of options instead of using complex conditional statements
 * add license
 * add antlr gradle plugin

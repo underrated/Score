@@ -1,3 +1,5 @@
+/* This code was generated automatically by Score */
+
 #include <iostream>
 #include <systemc>
 #include <vector>
@@ -42,4 +44,5 @@ class example2 : public example, example1 {
 };
 int standalone_prototype(int z);
 int main_dummy();
+#define X 1
 #endif

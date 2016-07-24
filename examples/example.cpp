@@ -33,7 +33,6 @@ T funct(int x) {
 }
 
 class example {
-
   // Field variable
   string field;
 
@@ -81,5 +80,7 @@ int main_dummy() {
   caout << ex_inst.get_x() << endl;
   return 0;
 }
+
+#define X 1
 
 #endif

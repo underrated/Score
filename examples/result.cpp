@@ -1,3 +1,7 @@
+/* This code was generated automatically by Score */
+
+#include "result.hpp"
+
  example::example() {}
  example::~example() {}
 void example::set_x(int ox) {
