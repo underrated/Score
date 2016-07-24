@@ -97,9 +97,11 @@ Building and installation
 =========================
 The easiest way to build the project is by using gradle:
 
+```bash
 git clone https://github.com/underrated/Score.git
 cd Score
 gradle build
+```
 
 After the build is done you will find a Score.zip or a Score.tar archive in the following folder:
 ./build/distributions
