@@ -1,5 +1,8 @@
-* automatically include generated header in source
-* generate initialization of static fields
+* needed for alpha release
+  * automatically include generated header in source
+  * generate initialization of static fields
+  * add a sanity test that passes
+
 * write tests
   * class methods
   * static fields
