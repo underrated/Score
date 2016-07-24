@@ -96,6 +96,7 @@ int global_function() {
 Building and installation
 =========================
 The easiest way to build the project is by using gradle:
+
 git clone https://github.com/underrated/Score.git
 cd Score
 gradle build
@@ -111,7 +112,7 @@ Big C++ projects require a strict separation between the declaration and the imp
 
 This separation is necesarry for many reasons:
 
-* It makes recompilation faster. Instead of compiling one huge .cpp file that includes all the headers you compile smaller .cpp files containing the relevant parts of your application. That way, whenever you make a change in the code, you won't need to recompile everything all over again but instead you will only compile the .cpp that contains or includes the change. 
+* It makes recompilation faster. Instead of compiling one huge .cpp file that includes all the headers every time you make a change, you compile smaller .cpp files containing the relevant parts of your application into object files which you later link together into a shared or a static library. That way, whenever you make a change in the code, you won't need to recompile everything all over again but only the .cpp files that contain or include the change. 
 
 * Sometimes the headers are shipped along with the binaries so that the user can have access to the API of the product without seeing the implementation details.
 
