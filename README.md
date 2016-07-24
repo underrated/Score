@@ -104,8 +104,11 @@ gradle build
 ```
 
 After the build is done you will find a Score.zip or a Score.tar archive in the following folder:
+
 ./build/distributions
+
 Extract the archive wherever you like and add the Score/bin folder into the PATH variable.
+
 Then you can run "Score -h" to learn what arguments it takes.
 
 Motivation
