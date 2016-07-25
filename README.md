@@ -42,7 +42,7 @@ int global_function() {
 
 ```
 
-Running "Score -i unseparated.cc -oh header.h -os source.cpp" would split the code above into the following 2 files:
+Running *"Score -i unseparated.cc -oh header.h -os source.cpp"* would split the code above into the following 2 files:
 ```cpp
 // File: header.h
 #include <iostream>
@@ -115,8 +115,10 @@ Then you can run *"Score -h"* to learn what arguments it takes.
 Usage
 =====
 ```
-usage: score -i input.hpp -o output
+usage: Score -i input.hpp -o output
  -h          Print help message.
+ -hp <arg>   Relative path to the included header used in the #include
+             statement. e.g #include "<header_path>/header.h"
  -i <arg>    Path to input file.
  -o <arg>    Path to generated files in the form <folder>/<name_root>. Two
              files will be created, one with the hpp extension added to
