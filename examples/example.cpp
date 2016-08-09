@@ -33,6 +33,9 @@ T funct(int x) {
 }
 
 class example {
+
+  static int stx;
+
   // Field variable
   string field;
 
@@ -63,6 +66,7 @@ class example {
   float prototype(int arg);
 
 };
+int example::stx = 0;
 
 class example1 {
 };

@@ -16,10 +16,10 @@ public class ScoreListener extends CPP14BaseListener {
 
 	String cppHeader = "";
 	String cppSource = "";
-	
+
 	private FileOutputStream header;
 	private FileOutputStream src;
-	
+
 	private boolean debug = false;
 
 	Stack<ParserRuleContext> currentContext;
@@ -35,9 +35,9 @@ public class ScoreListener extends CPP14BaseListener {
 	void appendSourceString(String what) {
 		cppSource = cppSource + what + "\n";
 	}
-	
+
 	void appendHeader(String what) {
-		if(debug)
+		if (debug)
 			appendHeaderString(what + "\n");
 		try {
 			header.write((what + "\n").getBytes());
@@ -47,7 +47,7 @@ public class ScoreListener extends CPP14BaseListener {
 	}
 
 	void appendSource(String what) {
-		if(debug)
+		if (debug)
 			appendSourceString(what + "\n");
 		try {
 			src.write((what + "\n").getBytes());
@@ -135,19 +135,36 @@ public class ScoreListener extends CPP14BaseListener {
 		}
 
 		try {
-			if (null != ctx.blockdeclaration().simpledeclaration().declspecifierseq().declspecifier()
-					.typespecifier().classspecifier())
+			if (null != ctx.blockdeclaration().simpledeclaration().declspecifierseq().declspecifier().typespecifier()
+					.classspecifier())
 				return;
 		} catch (Throwable e) {
 		}
 
-		// TODO : keep templates, function prototypes, global variables, and
-		// pretty much everything else
+		// Initialization of static fields will be copied to the source file
+		boolean isStaticInit = false;
+		try {
+			if (null != ctx.blockdeclaration().simpledeclaration().initdeclaratorlist().initdeclarator().declarator()
+					.ptrdeclarator().noptrdeclarator().declaratorid().idexpression().qualifiedid())
+				isStaticInit = true;
+
+		} catch (Throwable e) {
+			isStaticInit = false;
+		}
+		try {
+			if (null != ctx.blockdeclaration().simpledeclaration().initdeclaratorlist().initdeclarator().declarator()
+					.ptrdeclarator().ptrdeclarator().noptrdeclarator().declaratorid().idexpression().qualifiedid())
+				isStaticInit = true;
+		} catch (Throwable e) {
+		}
 
 		int a = ctx.start.getStartIndex();
 		int b = ctx.stop.getStopIndex();
 		Interval interval = new Interval(a, b);
-		appendHeader(ctx.start.getInputStream().getText(interval));
+		if (isStaticInit)
+			appendSource(ctx.start.getInputStream().getText(interval));
+		else
+			appendHeader(ctx.start.getInputStream().getText(interval));
 
 	}
 
@@ -190,6 +207,28 @@ public class ScoreListener extends CPP14BaseListener {
 
 		if (isTemplate(ctx.getParent()))
 			return;
+		
+		// All external implementations of methods must be copied to the source
+		boolean isExternImpl = false;
+		try {
+			if(null != ctx.declarator().ptrdeclarator().noptrdeclarator().noptrdeclarator()
+					.declaratorid().idexpression().qualifiedid() )		
+				isExternImpl = true;
+		} catch (Throwable e) {
+		}
+		try {
+			if(null != ctx.declarator().ptrdeclarator().ptrdeclarator().noptrdeclarator().noptrdeclarator()
+					.declaratorid().idexpression().qualifiedid() )		
+				isExternImpl = true;
+		} catch (Throwable e) {
+		}
+		if(isExternImpl) {
+			int a = ctx.start.getStartIndex();
+			int b = ctx.stop.getStopIndex();
+			Interval interval = new Interval(a, b);
+			appendSource(ctx.start.getInputStream().getText(interval));
+			return;
+		}
 
 		int a, b;
 		// Return type, access specifiers and other stuff
@@ -209,7 +248,6 @@ public class ScoreListener extends CPP14BaseListener {
 		// Write prototype to header
 		appendHeader(specSeq + " " + funcNameArgs + ";");
 
-		// TODO : Write to source
 		if (null != ctx.functionbody()) {
 			String defString = "";
 			String funcBody = "";
@@ -261,7 +299,7 @@ public class ScoreListener extends CPP14BaseListener {
 		if (isField || isPrototype)
 			appendHeader(declaration);
 	}
-	
+
 	@Override
 	public void exitTranslationunit(CPP14Parser.TranslationunitContext ctx) {
 		Token end = ctx.getStop();
@@ -274,11 +312,9 @@ public class ScoreListener extends CPP14BaseListener {
 					appendHeader(txt);
 				}
 			}
-		}	
+		}
 	}
-	
 
 	// TODO : treat static fields
-	// TODO :
 
 }

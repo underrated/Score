@@ -1,5 +1,4 @@
 * needed for alpha release
-  * generate initialization of static fields
   * add a sanity test that passes
 
 * The parser does not recognize syntax errors in certain places and copies them automatically
@@ -15,6 +14,7 @@
   * initializations
   * automatically include header
   * test various combinations of command line arguments
+  * pure virtual methods
 * use assertions to check the validity of options instead of using complex conditional statements
 * add license
 * add antlr gradle plugin

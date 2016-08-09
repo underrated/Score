@@ -26,6 +26,7 @@ T funct(int x) {
   return x + 1;
 }
 class example {
+static int stx; 
 string field; 
 int x = 1; 
 int *y = NULL; 

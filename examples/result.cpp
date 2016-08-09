@@ -10,6 +10,7 @@ void example::set_x(int ox) {
 int example::get_x() {
     return x;
   }
+int example::stx = 0;
 int main_dummy() {
   example* ex_inst = new example();
   ex_inst.set_x(5);
