@@ -76,7 +76,7 @@ Foo::Foo(int bar) {
 }
 
 Foo::~Foo() {
-  cour<<"Foo has been destroyed.";
+  cout<<"Foo has been destroyed.";
 }
 
 int Foo::get_bar() {
